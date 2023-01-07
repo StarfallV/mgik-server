@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//Database Model
+model PurchaseOrder {
+  id             Int      @id @default(autoincrement())
+  po_number      String   @unique
+  outlet_id      Int
+  note           String   @db.VarChar(255)
+  purchase_list  PurchaseOrderDetail[]
+  created_by     User     @relation(fields: [created_id], references: [id])
+  created_id     Int
+  created_date   DateTime @default(now())
+  updated_by     User     @relation(fields: [updated_id], references: [id])
+  updated_id     Int
+  updated_date   DateTime @default(now())
+}
+
+model PurchaseOrderDetail {
+  id             Int            @id @default(autoincrement())
+  po             Item           @relation(fields: [po_id], references: [id])
+  po_id          Int
+  item_id        Item           @relation(fields: [item_id], references: [id])
+  current_price  Int            @unique
+  qty            Int
+  created_by     User           @relation(fields: [created_id], references: [id])
+  created_id     Int
+  created_date   DateTime       @default(now())
+  updated_by     User           @relation(fields: [updated_id], references: [id])
+  updated_id     Int
+  updated_date   DateTime       @default(now())
+}
+
+model Item {
+  id             Int            @id @default(autoincrement())
+  item_no        String         @unique
+  name           String         @db.VarChar(50)
+  alias_1        String         @db.VarChar(50)
+  alias_2        String         @db.VarChar(50)
+  alias_3        String         @db.VarChar(50)
+  alias_4        String         @db.VarChar(50)
+  created_by     User           @relation(fields: [created_id], references: [id])
+  created_id     Int
+  created_date   DateTime       @default(now())
+  updated_by     User           @relation(fields: [updated_id], references: [id])
+  updated_id     Int
+  updated_date   DateTime       @default(now())
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  username   String   @unique
+  name    String?
+}
